@@ -56,7 +56,7 @@ export default async function CustomerLedgerPage({ params }: { params: Promise<{
             </tr>
           </thead>
           <tbody>
-            {customer.sales.map(s => (
+            {customer.sales.map((s: any) => (
               <tr key={`sale-${s.id}`} style={{ borderBottom: '1px solid var(--border)' }}>
                 <td style={{ padding: '1rem' }}>{formatDate(s.date)}</td>
                 <td style={{ padding: '1rem' }}><span style={{ padding: '0.2rem 0.6rem', background: '#fef2f2', color: 'var(--danger)', borderRadius: '1rem', fontSize: '0.8rem', fontWeight: 600 }}>Sale</span></td>
@@ -64,7 +64,7 @@ export default async function CustomerLedgerPage({ params }: { params: Promise<{
                 <td style={{ padding: '1rem', textAlign: 'right', fontWeight: 600, color: 'var(--danger)' }}>+{formatCurrency(s.totalAmount)}</td>
               </tr>
             ))}
-            {customer.payments.map(p => (
+            {customer.payments.map((p: any) => (
               <tr key={`pay-${p.id}`} style={{ borderBottom: '1px solid var(--border)' }}>
                 <td style={{ padding: '1rem' }}>{formatDate(p.date)}</td>
                 <td style={{ padding: '1rem' }}><span style={{ padding: '0.2rem 0.6rem', background: '#ecfdf5', color: 'var(--primary)', borderRadius: '1rem', fontSize: '0.8rem', fontWeight: 600 }}>Payment</span></td>

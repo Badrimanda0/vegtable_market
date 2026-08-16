@@ -39,9 +39,9 @@ export async function getCustomers() {
     orderBy: { createdAt: 'desc' }
   });
 
-  return customers.map(c => {
-    const totalSales = c.sales.reduce((sum, s) => sum + s.totalAmount, 0);
-    const totalPayments = c.payments.reduce((sum, p) => sum + p.amount, 0);
+  return customers.map((c: any) => {
+    const totalSales = c.sales.reduce((sum: number, s: any) => sum + s.totalAmount, 0);
+    const totalPayments = c.payments.reduce((sum: number, p: any) => sum + p.amount, 0);
     return {
       ...c,
       totalSales,
@@ -62,8 +62,8 @@ export async function getCustomerLedger(id: number) {
   
   if (!customer) return null;
   
-  const totalSales = customer.sales.reduce((sum, s) => sum + s.totalAmount, 0);
-  const totalPayments = customer.payments.reduce((sum, p) => sum + p.amount, 0);
+  const totalSales = customer.sales.reduce((sum: number, s: any) => sum + s.totalAmount, 0);
+  const totalPayments = customer.payments.reduce((sum: number, p: any) => sum + p.amount, 0);
 
   return {
     customer,
