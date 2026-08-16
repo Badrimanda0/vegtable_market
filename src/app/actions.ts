@@ -76,6 +76,8 @@ export async function getCustomerLedger(id: number) {
 export async function createCustomer(data: { name: string; phone?: string; shopName?: string }) {
   const customer = await prisma.customer.create({ data });
   revalidatePath('/customers');
+  revalidatePath('/sales/new');
+  revalidatePath('/payments/new');
   return customer;
 }
 
