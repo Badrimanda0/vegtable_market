@@ -1,5 +1,6 @@
-import { getCustomerLedger } from '../../actions';
+import { getCustomerLedger, deleteSale, deletePayment } from '../../actions';
 import Link from 'next/link';
+import DeleteButton from '../../delete-button';
 
 export default async function CustomerLedgerPage({ params }: { params: Promise<{ id: string }> }) {
   const resolvedParams = await params;
@@ -53,6 +54,7 @@ export default async function CustomerLedgerPage({ params }: { params: Promise<{
               <th style={{ padding: '1rem' }}>Type</th>
               <th style={{ padding: '1rem' }}>Details</th>
               <th style={{ padding: '1rem', textAlign: 'right' }}>Amount</th>
+              <th style={{ padding: '1rem' }}>Actions</th>
             </tr>
           </thead>
           <tbody>
@@ -62,6 +64,12 @@ export default async function CustomerLedgerPage({ params }: { params: Promise<{
                 <td style={{ padding: '1rem' }}><span style={{ padding: '0.2rem 0.6rem', background: '#fef2f2', color: 'var(--danger)', borderRadius: '1rem', fontSize: '0.8rem', fontWeight: 600 }}>Sale</span></td>
                 <td style={{ padding: '1rem' }}>{s.quantityKg} KG {s.vegetable} @ ₹{s.ratePerKg}</td>
                 <td style={{ padding: '1rem', textAlign: 'right', fontWeight: 600, color: 'var(--danger)' }}>+{formatCurrency(s.totalAmount)}</td>
+                <td style={{ padding: '1rem' }}>
+                  <div style={{ display: 'flex', gap: '0.5rem' }}>
+                    <Link href={`/sales/${s.id}/edit`} className="btn" style={{ padding: '0.4rem 0.8rem', fontSize: '0.8rem', background: 'var(--foreground)' }}>Edit</Link>
+                    <DeleteButton action={deleteSale.bind(null, s.id, customer.id)} itemType="Sale" />
+                  </div>
+                </td>
               </tr>
             ))}
             {customer.payments.map((p: any) => (
@@ -70,6 +78,12 @@ export default async function CustomerLedgerPage({ params }: { params: Promise<{
                 <td style={{ padding: '1rem' }}><span style={{ padding: '0.2rem 0.6rem', background: '#ecfdf5', color: 'var(--primary)', borderRadius: '1rem', fontSize: '0.8rem', fontWeight: 600 }}>Payment</span></td>
                 <td style={{ padding: '1rem' }}>Payment Received</td>
                 <td style={{ padding: '1rem', textAlign: 'right', fontWeight: 600, color: 'var(--primary)' }}>-{formatCurrency(p.amount)}</td>
+                <td style={{ padding: '1rem' }}>
+                  <div style={{ display: 'flex', gap: '0.5rem' }}>
+                    <Link href={`/payments/${p.id}/edit`} className="btn" style={{ padding: '0.4rem 0.8rem', fontSize: '0.8rem', background: 'var(--foreground)' }}>Edit</Link>
+                    <DeleteButton action={deletePayment.bind(null, p.id, customer.id)} itemType="Payment" />
+                  </div>
+                </td>
               </tr>
             ))}
             {customer.sales.length === 0 && customer.payments.length === 0 && (

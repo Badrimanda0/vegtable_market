@@ -1,6 +1,7 @@
-import { getCustomers } from '../actions';
+import { getCustomers, deleteCustomer } from '../actions';
 import NewCustomerForm from './NewCustomerForm';
 import Link from 'next/link';
+import DeleteButton from '../delete-button';
 
 export default async function CustomersPage() {
   const customers = await getCustomers();
@@ -15,7 +16,7 @@ export default async function CustomersPage() {
         <h1 className="page-title" style={{ marginBottom: 0 }}>Customers</h1>
       </div>
       
-      <div style={{ display: 'grid', gridTemplateColumns: '1fr 300px', gap: '2rem' }}>
+      <div className="page-grid">
         <div>
           <div className="card" style={{ padding: 0 }}>
             <div className="table-responsive">
@@ -39,7 +40,11 @@ export default async function CustomersPage() {
                       {formatCurrency(c.pendingAmount)}
                     </td>
                     <td style={{ padding: '1rem' }}>
-                      <Link href={`/customers/${c.id}`} className="btn" style={{ padding: '0.4rem 0.8rem', fontSize: '0.8rem' }}>Ledger</Link>
+                      <div style={{ display: 'flex', gap: '0.5rem' }}>
+                        <Link href={`/customers/${c.id}`} className="btn" style={{ padding: '0.4rem 0.8rem', fontSize: '0.8rem' }}>Ledger</Link>
+                        <Link href={`/customers/${c.id}/edit`} className="btn" style={{ padding: '0.4rem 0.8rem', fontSize: '0.8rem', background: 'var(--foreground)' }}>Edit</Link>
+                        <DeleteButton action={deleteCustomer.bind(null, c.id)} itemType="Customer" />
+                      </div>
                     </td>
                   </tr>
                 ))}

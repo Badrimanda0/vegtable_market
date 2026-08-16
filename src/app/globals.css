@@ -47,23 +47,42 @@ a {
 
 .navbar {
   display: flex;
-  flex-wrap: wrap;
-  gap: 1.5rem;
+  flex-direction: column;
   padding: 1rem 1.5rem;
   background: var(--surface);
   border: 1px solid var(--border);
   box-shadow: var(--shadow);
   border-radius: var(--radius);
   margin-bottom: 2rem;
-  align-items: center;
 }
 
-@media (max-width: 600px) {
-  .navbar {
-    gap: 1rem;
-    justify-content: center;
-    padding: 1rem;
-  }
+.navbar-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+}
+
+.nav-brand {
+  font-weight: 700;
+  color: var(--foreground);
+  font-size: 1.25rem;
+}
+
+.hamburger {
+  display: none;
+  background: none;
+  border: none;
+  font-size: 1.5rem;
+  cursor: pointer;
+  color: var(--foreground);
+}
+
+.nav-links {
+  display: flex;
+  gap: 1.5rem;
+  align-items: center;
+  margin-top: 1rem;
 }
 
 .nav-link {
@@ -71,9 +90,46 @@ a {
   color: var(--text-muted);
 }
 
-.nav-link:hover {
+.nav-link:hover, .nav-link.active {
   color: var(--primary);
   text-decoration: underline;
+}
+
+@media (min-width: 769px) {
+  .navbar {
+    flex-direction: row;
+    align-items: center;
+    justify-content: flex-start;
+    gap: 2rem;
+  }
+  
+  .navbar-header {
+    width: auto;
+  }
+  
+  .nav-links {
+    margin-top: 0;
+  }
+}
+
+@media (max-width: 768px) {
+  .hamburger {
+    display: block;
+  }
+  
+  .nav-links {
+    display: none;
+    flex-direction: column;
+    align-items: flex-start;
+    width: 100%;
+    gap: 1rem;
+    padding-top: 1rem;
+    border-top: 1px solid var(--border);
+  }
+  
+  .nav-links.open {
+    display: flex;
+  }
 }
 
 .card {
@@ -143,6 +199,13 @@ a {
   font-weight: 500;
 }
 
+.page-grid {
+  display: grid;
+  grid-template-columns: 1fr 300px;
+  gap: 2rem;
+}
+
+
 table th {
   font-weight: 600;
   color: var(--foreground);
@@ -171,18 +234,16 @@ table th {
     gap: 1rem;
   }
   
+  .page-grid {
+    grid-template-columns: 1fr;
+  }
+  
   .quick-actions-container {
     flex-direction: column;
   }
   
   .quick-actions-container .btn {
     width: 100%;
-  }
-
-  .navbar {
-    flex-direction: column;
-    align-items: center;
-    gap: 0.75rem;
   }
 }
 

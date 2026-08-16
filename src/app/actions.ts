@@ -135,3 +135,56 @@ export async function resetDatabase() {
   revalidatePath('/customers');
   revalidatePath('/reports');
 }
+
+export async function deleteCustomer(id: number) {
+  // Delete related records first
+  await prisma.sale.deleteMany({ where: { customerId: id } });
+  await prisma.payment.deleteMany({ where: { customerId: id } });
+  await prisma.customer.delete({ where: { id } });
+  
+  revalidatePath('/');
+  revalidatePath('/customers');
+  revalidatePath('/reports');
+}
+
+export async function deleteSale(id: number, customerId: number) {
+  await prisma.sale.delete({ where: { id } });
+  revalidatePath('/');
+  revalidatePath('/customers');
+  revalidatePath('/reports');
+  revalidatePath(`/customers/${customerId}`);
+}
+
+export async function deletePayment(id: number, customerId: number) {
+  await prisma.payment.delete({ where: { id } });
+  revalidatePath('/');
+  revalidatePath('/customers');
+  revalidatePath('/reports');
+  revalidatePath(`/customers/${customerId}`);
+}
+
+export async function updateCustomer(id: number, data: { name: string; phone?: string; shopName?: string }) {
+  const customer = await prisma.customer.update({ where: { id }, data });
+  revalidatePath('/');
+  revalidatePath('/customers');
+  revalidatePath(`/customers/${id}`);
+  return customer;
+}
+
+export async function updateSale(id: number, data: { vegetable: string; quantityKg: number; ratePerKg: number; totalAmount: number; commission: number }) {
+  const sale = await prisma.sale.update({ where: { id }, data });
+  revalidatePath('/');
+  revalidatePath('/customers');
+  revalidatePath('/reports');
+  revalidatePath(`/customers/${sale.customerId}`);
+  return sale;
+}
+
+export async function updatePayment(id: number, data: { amount: number }) {
+  const payment = await prisma.payment.update({ where: { id }, data });
+  revalidatePath('/');
+  revalidatePath('/customers');
+  revalidatePath('/reports');
+  revalidatePath(`/customers/${payment.customerId}`);
+  return payment;
+}
