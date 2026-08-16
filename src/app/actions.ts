@@ -238,3 +238,63 @@ export async function getRecentBills() {
     include: { customer: true }
   });
 }
+
+export async function getImagesGroupedByDate() {
+  const sales = await prisma.sale.findMany({
+    where: { billImage: { not: null } },
+    include: { customer: true },
+    orderBy: { date: 'desc' }
+  });
+
+  const payments = await prisma.payment.findMany({
+    where: { receiptImage: { not: null } },
+    include: { customer: true },
+    orderBy: { date: 'desc' }
+  });
+
+  const grouped: Record<string, any[]> = {};
+
+  const formatDate = (date: Date) => {
+    const d = new Date(date);
+    d.setHours(0, 0, 0, 0);
+    return d.toISOString();
+  };
+
+  sales.forEach(sale => {
+    const key = formatDate(sale.date);
+    if (!grouped[key]) grouped[key] = [];
+    grouped[key].push({
+      id: `sale-${sale.id}`,
+      type: 'sale',
+      image: sale.billImage,
+      customerName: sale.customer.name,
+      date: sale.date,
+      amount: sale.totalAmount,
+    });
+  });
+
+  payments.forEach(payment => {
+    const key = formatDate(payment.date);
+    if (!grouped[key]) grouped[key] = [];
+    grouped[key].push({
+      id: `payment-${payment.id}`,
+      type: 'payment',
+      image: payment.receiptImage,
+      customerName: payment.customer.name,
+      date: payment.date,
+      amount: payment.amount,
+    });
+  });
+
+  // Sort groups by date descending
+  const sortedDates = Object.keys(grouped).sort((a, b) => new Date(b).getTime() - new Date(a).getTime());
+  
+  return sortedDates.map(dateKey => {
+    // Sort items within each date by time descending
+    const items = grouped[dateKey].sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
+    return {
+      dateString: dateKey,
+      items
+    };
+  });
+}
