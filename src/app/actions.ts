@@ -126,3 +126,12 @@ export async function getDailyReports() {
 
   return Object.values(reports).sort((a, b) => b.date.getTime() - a.date.getTime());
 }
+
+export async function resetDatabase() {
+  await prisma.sale.deleteMany();
+  await prisma.payment.deleteMany();
+  await prisma.customer.deleteMany();
+  revalidatePath('/');
+  revalidatePath('/customers');
+  revalidatePath('/reports');
+}

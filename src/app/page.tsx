@@ -1,5 +1,6 @@
 import { getDashboardStats } from "./actions";
 import Link from 'next/link';
+import ResetButton from './reset-button';
 
 export default async function Dashboard() {
   const stats = await getDashboardStats();
@@ -49,11 +50,12 @@ export default async function Dashboard() {
         <p style={{ color: 'var(--text-muted)', marginBottom: '1.5rem', marginTop: '0.5rem' }}>
           Get started by adding a new sale or recording a payment from a customer.
         </p>
-        <div style={{ display: 'flex', gap: '1rem', flexWrap: 'wrap' }}>
+        <div className="quick-actions-container">
           <Link href="/sales/new" className="btn">Add New Sale</Link>
           <Link href="/payments/new" className="btn" style={{ background: 'var(--foreground)' }}>Receive Payment</Link>
           <Link href="/customers" className="btn" style={{ background: 'var(--border)', color: 'var(--foreground)' }}>View Customers</Link>
           <Link href="/reports" className="btn" style={{ background: 'var(--background)', color: 'var(--foreground)', border: '1px solid var(--border)' }}>View Reports</Link>
+          <ResetButton />
         </div>
       </div>
     </div>
