@@ -3,6 +3,8 @@ import NewCustomerForm from './NewCustomerForm';
 import Link from 'next/link';
 import DeleteButton from '../delete-button';
 
+export const dynamic = 'force-dynamic';
+
 export default async function CustomersPage() {
   const customers = await getCustomers();
   

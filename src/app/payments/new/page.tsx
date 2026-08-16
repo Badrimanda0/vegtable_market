@@ -1,6 +1,8 @@
 import { getCustomers } from '../../actions';
 import PaymentForm from './PaymentForm';
 
+export const dynamic = 'force-dynamic';
+
 export default async function NewPaymentPage() {
   const customers = await getCustomers();
   

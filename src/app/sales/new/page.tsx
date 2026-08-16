@@ -1,6 +1,8 @@
 import { getCustomers } from '../../actions';
 import SaleForm from './SaleForm';
 
+export const dynamic = 'force-dynamic';
+
 export default async function NewSalePage() {
   const customers = await getCustomers();
   

@@ -2,6 +2,8 @@ import { getDashboardStats } from "./actions";
 import Link from 'next/link';
 import ResetButton from './reset-button';
 
+export const dynamic = 'force-dynamic';
+
 export default async function Dashboard() {
   const stats = await getDashboardStats();
 
