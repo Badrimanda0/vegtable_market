@@ -89,10 +89,8 @@ export async function createSale(formData: FormData) {
   
   if (billImage && billImage.size > 0) {
     const buffer = Buffer.from(await billImage.arrayBuffer());
-    const filename = `${Date.now()}-${billImage.name.replace(/\s/g, '_')}`;
-    const filepath = path.join(process.cwd(), 'public', 'uploads', filename);
-    await writeFile(filepath, buffer);
-    billImageUrl = `/uploads/${filename}`;
+    const mimeType = billImage.type || 'image/jpeg';
+    billImageUrl = `data:${mimeType};base64,${buffer.toString('base64')}`;
   }
 
   const data = {
@@ -120,10 +118,8 @@ export async function createPayment(formData: FormData) {
   
   if (receiptImage && receiptImage.size > 0) {
     const buffer = Buffer.from(await receiptImage.arrayBuffer());
-    const filename = `${Date.now()}-${receiptImage.name.replace(/\s/g, '_')}`;
-    const filepath = path.join(process.cwd(), 'public', 'uploads', filename);
-    await writeFile(filepath, buffer);
-    receiptImageUrl = `/uploads/${filename}`;
+    const mimeType = receiptImage.type || 'image/jpeg';
+    receiptImageUrl = `data:${mimeType};base64,${buffer.toString('base64')}`;
   }
 
   const data = {
