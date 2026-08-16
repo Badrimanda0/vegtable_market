@@ -23,6 +23,7 @@ export default function Navbar() {
       </div>
       
       <div className={`nav-links ${isOpen ? "open" : ""}`}>
+        <Link href="/" className={`nav-link ${pathname === '/' ? 'active' : ''}`} onClick={closeMenu}>Dashboard</Link>
         <Link href="/customers" className={`nav-link ${pathname === '/customers' ? 'active' : ''}`} onClick={closeMenu}>Customers</Link>
         <Link href="/sales/new" className={`nav-link ${pathname === '/sales/new' ? 'active' : ''}`} onClick={closeMenu}>Add Sale</Link>
         <Link href="/payments/new" className={`nav-link ${pathname === '/payments/new' ? 'active' : ''}`} onClick={closeMenu}>Receive Payment</Link>

@@ -38,8 +38,8 @@ export default async function CustomersPage() {
                       <Link href={`/customers/${c.id}`} style={{ color: 'var(--primary)' }}>{c.name}</Link>
                     </td>
                     <td style={{ padding: '1rem' }}>{c.phone || '-'}</td>
-                    <td style={{ padding: '1rem', color: c.pendingAmount > 0 ? 'var(--danger)' : 'var(--text-muted)', fontWeight: 600 }}>
-                      {formatCurrency(c.pendingAmount)}
+                    <td style={{ padding: '1rem', color: c.pendingAmount > 0 ? 'var(--danger)' : c.pendingAmount < 0 ? 'var(--success)' : 'var(--text-muted)', fontWeight: 600 }}>
+                      {c.pendingAmount < 0 ? `Advance: ${formatCurrency(Math.abs(c.pendingAmount))}` : formatCurrency(c.pendingAmount)}
                     </td>
                     <td style={{ padding: '1rem' }}>
                       <div style={{ display: 'flex', gap: '0.5rem' }}>

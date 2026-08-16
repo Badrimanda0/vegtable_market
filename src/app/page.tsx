@@ -26,9 +26,9 @@ export default async function Dashboard() {
         </div>
         
         <div className="card">
-          <div className="stat-label">Total Debt (Pending)</div>
-          <div className="stat-value" style={{ color: 'var(--danger)' }}>
-            {formatCurrency(stats.pendingDebt)}
+          <div className="stat-label">{stats.pendingDebt < 0 ? 'Total Advance (We Owe)' : 'Total Debt (Pending)'}</div>
+          <div className="stat-value" style={{ color: stats.pendingDebt < 0 ? 'var(--success)' : 'var(--danger)' }}>
+            {stats.pendingDebt < 0 ? formatCurrency(Math.abs(stats.pendingDebt)) : formatCurrency(stats.pendingDebt)}
           </div>
         </div>
         

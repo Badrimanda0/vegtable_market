@@ -28,7 +28,30 @@ export default async function EditSalePage({ params }: { params: Promise<{ id: s
       <form action={handleUpdate} style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
         <div>
           <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 500 }}>Vegetable *</label>
-          <input type="text" name="vegetable" defaultValue={sale.vegetable} required style={{ width: '100%', padding: '0.75rem', borderRadius: 'var(--radius)', border: '1px solid var(--border)' }} />
+          <select name="vegetable" defaultValue={sale.vegetable} required style={{ width: '100%', padding: '0.75rem', borderRadius: 'var(--radius)', border: '1px solid var(--border)' }}>
+            <option value="">-- Select Vegetable --</option>
+            <option value="CT (Country Tomato)">CT (Country Tomato)</option>
+            <option value="BT (Bangalore Tomato)">BT (Bangalore Tomato)</option>
+            <option value="Caps (Capsicum)">Caps (Capsicum)</option>
+            <option value="CB (Cabbage)">CB (Cabbage)</option>
+            <option value="CF (Cauliflower)">CF (Cauliflower)</option>
+            <option value="Chama (Taro Root)">Chama (Taro Root)</option>
+            <option value="BM (Bajji Mirchi)">BM (Bajji Mirchi)</option>
+            <option value="ML (Mullangi)">ML (Mullangi)</option>
+            <option value="Beera (Ridge Gourd)">Beera (Ridge Gourd)</option>
+            <option value="BNS (Green Beans)">BNS (Green Beans)</option>
+            <option value="Kakara (Bitter Gourd)">Kakara (Bitter Gourd)</option>
+            <option value="AA Kakara (Teasel Gourd)">AA Kakara (Teasel Gourd)</option>
+            <option value="Dhonda (Ivy Gourd)">Dhonda (Ivy Gourd)</option>
+            <option value="Keera (Cucumber)">Keera (Cucumber)</option>
+            <option value="Benda (Okra)">Benda (Okra)</option>
+            <option value="Sora (Bottle Gourd)">Sora (Bottle Gourd)</option>
+            <option value="Mirchi (Green Chilli)">Mirchi (Green Chilli)</option>
+            <option value="Dosa (Yellow Cucumber)">Dosa (Yellow Cucumber)</option>
+            <option value="Munaga (Drumstick)">Munaga (Drumstick)</option>
+            <option value="Ulli (Onion)">Ulli (Onion)</option>
+            <option value="Gummadi (Pumpkin)">Gummadi (Pumpkin)</option>
+          </select>
         </div>
         <div className="form-row">
           <div style={{ flex: 1 }}>

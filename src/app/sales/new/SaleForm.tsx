@@ -10,7 +10,9 @@ export default function SaleForm({ customers }: { customers: any[] }) {
   const [loading, setLoading] = useState(false);
   const router = useRouter();
   
-  const total = (parseFloat(qty) || 0) * (parseFloat(rate) || 0);
+  const subtotal = (parseFloat(qty) || 0) * (parseFloat(rate) || 0);
+  const commAmount = parseFloat(commission) || 0;
+  const total = subtotal - commAmount;
   
   async function action(formData: FormData) {
     setLoading(true);
@@ -40,7 +42,30 @@ export default function SaleForm({ customers }: { customers: any[] }) {
       
       <div>
         <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 500 }}>Vegetable Name *</label>
-        <input name="vegetable" placeholder="e.g. Tomato" required style={{ width: '100%', padding: '0.75rem', borderRadius: 'var(--radius-md)', border: '1px solid var(--border)' }} />
+        <select name="vegetable" required style={{ width: '100%', padding: '0.75rem', borderRadius: 'var(--radius-md)', border: '1px solid var(--border)' }}>
+          <option value="">-- Select Vegetable --</option>
+          <option value="CT (Country Tomato)">CT (Country Tomato)</option>
+          <option value="BT (Bangalore Tomato)">BT (Bangalore Tomato)</option>
+          <option value="Caps (Capsicum)">Caps (Capsicum)</option>
+          <option value="CB (Cabbage)">CB (Cabbage)</option>
+          <option value="CF (Cauliflower)">CF (Cauliflower)</option>
+          <option value="Chama (Taro Root)">Chama (Taro Root)</option>
+          <option value="BM (Bajji Mirchi)">BM (Bajji Mirchi)</option>
+          <option value="ML (Mullangi)">ML (Mullangi)</option>
+          <option value="Beera (Ridge Gourd)">Beera (Ridge Gourd)</option>
+          <option value="BNS (Green Beans)">BNS (Green Beans)</option>
+          <option value="Kakara (Bitter Gourd)">Kakara (Bitter Gourd)</option>
+          <option value="AA Kakara (Teasel Gourd)">AA Kakara (Teasel Gourd)</option>
+          <option value="Dhonda (Ivy Gourd)">Dhonda (Ivy Gourd)</option>
+          <option value="Keera (Cucumber)">Keera (Cucumber)</option>
+          <option value="Benda (Okra)">Benda (Okra)</option>
+          <option value="Sora (Bottle Gourd)">Sora (Bottle Gourd)</option>
+          <option value="Mirchi (Green Chilli)">Mirchi (Green Chilli)</option>
+          <option value="Dosa (Yellow Cucumber)">Dosa (Yellow Cucumber)</option>
+          <option value="Munaga (Drumstick)">Munaga (Drumstick)</option>
+          <option value="Ulli (Onion)">Ulli (Onion)</option>
+          <option value="Gummadi (Pumpkin)">Gummadi (Pumpkin)</option>
+        </select>
       </div>
       
       <div className="form-row">
@@ -60,7 +85,16 @@ export default function SaleForm({ customers }: { customers: any[] }) {
       </div>
       
       <div style={{ padding: '1rem', background: 'var(--background)', borderRadius: 'var(--radius-md)', border: '1px solid var(--border)' }}>
-        <div style={{ fontSize: '0.9rem', color: 'var(--text-muted)', textTransform: 'uppercase', fontWeight: 600 }}>Total Amount</div>
+        <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '0.5rem', color: 'var(--text-muted)' }}>
+          <span>Subtotal:</span>
+          <span>₹{subtotal.toFixed(2)}</span>
+        </div>
+        <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '0.5rem', color: 'var(--danger)' }}>
+          <span>Commission:</span>
+          <span>-₹{commAmount.toFixed(2)}</span>
+        </div>
+        <div style={{ borderTop: '1px solid var(--border)', margin: '0.5rem 0' }}></div>
+        <div style={{ fontSize: '0.9rem', color: 'var(--text-muted)', textTransform: 'uppercase', fontWeight: 600 }}>Net Total Amount</div>
         <div style={{ fontSize: '2rem', fontWeight: 700, color: 'var(--primary)' }}>₹{total.toFixed(2)}</div>
       </div>
       
