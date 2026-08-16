@@ -1,4 +1,4 @@
-import { getCustomerLedger } from '../../../actions';
+import { getCustomerLedger } from '../../actions';
 import Link from 'next/link';
 
 export default async function CustomerLedgerPage({ params }: { params: Promise<{ id: string }> }) {
