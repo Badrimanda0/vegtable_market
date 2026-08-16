@@ -40,9 +40,9 @@ export default async function Dashboard() {
         </div>
         
         <div className="card">
-          <div className="stat-label">Total Commission Earned</div>
+          <div className="stat-label">Total Boxes</div>
           <div className="stat-value" style={{ color: 'var(--success)' }}>
-            {formatCurrency(stats.totalCommission)}
+            {stats.totalCommission}
           </div>
         </div>
       </div>

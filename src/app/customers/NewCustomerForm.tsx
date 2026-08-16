@@ -11,6 +11,7 @@ export default function NewCustomerForm() {
       name: formData.get('name') as string,
       phone: formData.get('phone') as string,
       shopName: formData.get('shopName') as string,
+      createdAt: formData.get('createdAt') ? new Date(formData.get('createdAt') as string) : new Date(),
     });
     setLoading(false);
     // @ts-ignore
@@ -30,6 +31,11 @@ export default function NewCustomerForm() {
       <div>
         <label style={{ display: 'block', marginBottom: '0.5rem', fontSize: '0.9rem', fontWeight: 500 }}>Shop Name</label>
         <input name="shopName" style={{ width: '100%', padding: '0.75rem', borderRadius: 'var(--radius-md)', border: '1px solid var(--border)' }} />
+      </div>
+      <div>
+        <label style={{ display: 'block', marginBottom: '0.5rem', fontSize: '0.9rem', fontWeight: 500 }}>Added Date & Time</label>
+        <input type="datetime-local" name="createdAt" style={{ width: '100%', padding: '0.75rem', borderRadius: 'var(--radius-md)', border: '1px solid var(--border)' }} />
+        <small style={{ color: 'var(--text-muted)' }}>Leave blank to use current date and time</small>
       </div>
       <button type="submit" className="btn" disabled={loading} style={{ marginTop: '0.5rem' }}>
         {loading ? 'Adding...' : 'Add Customer'}

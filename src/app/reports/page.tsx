@@ -24,7 +24,7 @@ export default async function ReportsPage() {
             <tr>
               <th style={{ padding: '1rem' }}>Date</th>
               <th style={{ padding: '1rem', textAlign: 'right' }}>Total Sales</th>
-              <th style={{ padding: '1rem', textAlign: 'right', color: 'var(--primary)' }}>Commission Earned</th>
+              <th style={{ padding: '1rem', textAlign: 'right', color: 'var(--primary)' }}>Total Boxes</th>
               <th style={{ padding: '1rem', textAlign: 'right' }}>Received Payments</th>
               <th style={{ padding: '1rem', textAlign: 'right', color: 'var(--danger)' }}>New Pending Debt</th>
             </tr>
@@ -34,7 +34,7 @@ export default async function ReportsPage() {
               <tr key={i} style={{ borderBottom: '1px solid var(--border)' }}>
                 <td style={{ padding: '1rem', fontWeight: 500 }}>{formatDate(r.date)}</td>
                 <td style={{ padding: '1rem', textAlign: 'right', fontWeight: 600 }}>{formatCurrency(r.totalSales)}</td>
-                <td style={{ padding: '1rem', textAlign: 'right', fontWeight: 600, color: 'var(--primary)', background: '#ecfdf5' }}>{formatCurrency(r.totalCommission)}</td>
+                <td style={{ padding: '1rem', textAlign: 'right', fontWeight: 600, color: 'var(--primary)', background: '#ecfdf5' }}>{r.totalCommission}</td>
                 <td style={{ padding: '1rem', textAlign: 'right', fontWeight: 600 }}>{formatCurrency(r.totalReceived)}</td>
                 <td style={{ padding: '1rem', textAlign: 'right', fontWeight: 600, color: r.pendingGenerated > 0 ? 'var(--danger)' : 'var(--text-muted)' }}>
                   {r.pendingGenerated > 0 ? '+' : ''}{formatCurrency(r.pendingGenerated)}

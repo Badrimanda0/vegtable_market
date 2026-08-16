@@ -14,6 +14,7 @@ export default async function EditPaymentPage({ params }: { params: Promise<{ id
     'use server';
     await updatePayment(paymentId, {
       amount: parseFloat(formData.get('amount') as string),
+      date: formData.get('date') ? new Date(formData.get('date') as string) : undefined,
     });
     redirect(`/customers/${payment!.customerId}`);
   }
@@ -22,6 +23,10 @@ export default async function EditPaymentPage({ params }: { params: Promise<{ id
     <div className="card" style={{ maxWidth: '500px', margin: '0 auto' }}>
       <h2 style={{ marginBottom: '1.5rem' }}>Edit Payment</h2>
       <form action={handleUpdate} style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+        <div>
+          <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 500 }}>Date & Time</label>
+          <input type="datetime-local" name="date" defaultValue={payment.date ? new Date(payment.date.getTime() - payment.date.getTimezoneOffset() * 60000).toISOString().slice(0, 16) : ''} style={{ width: '100%', padding: '0.75rem', borderRadius: 'var(--radius)', border: '1px solid var(--border)' }} />
+        </div>
         <div>
           <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 500 }}>Amount (₹) *</label>
           <input type="number" step="0.01" name="amount" defaultValue={payment.amount} required style={{ width: '100%', padding: '0.75rem', borderRadius: 'var(--radius)', border: '1px solid var(--border)' }} />
