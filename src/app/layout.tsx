@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import Navbar from "./navbar";
+import WelcomePopup from "./welcome-popup";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -14,7 +15,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Vegetable Market",
+  title: "KOLAR BSR",
   description: "Simple vegetable market management",
 };
 
@@ -28,6 +29,7 @@ export default function RootLayout({
       <body>
         <div className="layout-container">
           <Navbar />
+          <WelcomePopup />
           <main>{children}</main>
         </div>
       </body>

@@ -15,7 +15,7 @@ export default function Navbar() {
     <nav className="navbar">
       <div className="navbar-header">
         <Link href="/" className="nav-link nav-brand" onClick={closeMenu}>
-          🥬 VegiMarket
+          🥕 KOLAR BSR
         </Link>
         <button className="hamburger" onClick={toggleMenu} aria-label="Toggle menu">
           ☰

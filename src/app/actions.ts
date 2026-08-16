@@ -73,7 +73,7 @@ export async function getCustomerLedger(id: number) {
   };
 }
 
-export async function createCustomer(data: { name: string; phone?: string; shopName?: string }) {
+export async function createCustomer(data: { name: string; phone?: string; shopName?: string; createdAt?: Date }) {
   const customer = await prisma.customer.create({ data });
   revalidatePath('/customers');
   revalidatePath('/sales/new');
@@ -81,7 +81,7 @@ export async function createCustomer(data: { name: string; phone?: string; shopN
   return customer;
 }
 
-export async function createSale(data: { customerId: number; vegetable: string; quantityKg: number; ratePerKg: number; totalAmount: number; commission: number }) {
+export async function createSale(data: { customerId: number; vegetable: string; quantityKg: number; ratePerKg: number; totalAmount: number; commission: number; date?: Date }) {
   const sale = await prisma.sale.create({ data });
   revalidatePath('/');
   revalidatePath('/customers');
@@ -90,7 +90,7 @@ export async function createSale(data: { customerId: number; vegetable: string; 
   return sale;
 }
 
-export async function createPayment(data: { customerId: number; amount: number }) {
+export async function createPayment(data: { customerId: number; amount: number; date?: Date }) {
   const payment = await prisma.payment.create({ data });
   revalidatePath('/');
   revalidatePath('/customers');
@@ -165,7 +165,7 @@ export async function deletePayment(id: number, customerId: number) {
   revalidatePath(`/customers/${customerId}`);
 }
 
-export async function updateCustomer(id: number, data: { name: string; phone?: string; shopName?: string }) {
+export async function updateCustomer(id: number, data: { name: string; phone?: string; shopName?: string; createdAt?: Date }) {
   const customer = await prisma.customer.update({ where: { id }, data });
   revalidatePath('/');
   revalidatePath('/customers');
@@ -173,7 +173,7 @@ export async function updateCustomer(id: number, data: { name: string; phone?: s
   return customer;
 }
 
-export async function updateSale(id: number, data: { vegetable: string; quantityKg: number; ratePerKg: number; totalAmount: number; commission: number }) {
+export async function updateSale(id: number, data: { vegetable: string; quantityKg: number; ratePerKg: number; totalAmount: number; commission: number; date?: Date }) {
   const sale = await prisma.sale.update({ where: { id }, data });
   revalidatePath('/');
   revalidatePath('/customers');
@@ -182,7 +182,7 @@ export async function updateSale(id: number, data: { vegetable: string; quantity
   return sale;
 }
 
-export async function updatePayment(id: number, data: { amount: number }) {
+export async function updatePayment(id: number, data: { amount: number; date?: Date }) {
   const payment = await prisma.payment.update({ where: { id }, data });
   revalidatePath('/');
   revalidatePath('/customers');

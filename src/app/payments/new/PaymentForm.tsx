@@ -12,6 +12,7 @@ export default function PaymentForm({ customers }: { customers: any[] }) {
     await createPayment({
       customerId: parseInt(formData.get('customerId') as string),
       amount: parseFloat(formData.get('amount') as string),
+      date: formData.get('date') ? new Date(formData.get('date') as string) : new Date(),
     });
     setLoading(false);
     router.push('/customers');
@@ -27,6 +28,12 @@ export default function PaymentForm({ customers }: { customers: any[] }) {
             <option key={c.id} value={c.id}>{c.name} (Pending: ₹{c.pendingAmount})</option>
           ))}
         </select>
+      </div>
+      
+      <div>
+        <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 500 }}>Date & Time</label>
+        <input type="datetime-local" name="date" style={{ width: '100%', padding: '0.75rem', borderRadius: 'var(--radius-md)', border: '1px solid var(--border)' }} />
+        <small style={{ color: 'var(--text-muted)' }}>Leave blank to use current date and time</small>
       </div>
       
       <div>

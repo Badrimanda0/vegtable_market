@@ -7,7 +7,7 @@ export default async function EditSalePage({ params }: { params: Promise<{ id: s
   const { id } = await params;
   const saleId = parseInt(id);
   const sale = await prisma.sale.findUnique({ where: { id: saleId } });
-  
+
   if (!sale) return <div>Not found</div>;
 
   async function handleUpdate(formData: FormData) {
@@ -18,6 +18,7 @@ export default async function EditSalePage({ params }: { params: Promise<{ id: s
       ratePerKg: parseFloat(formData.get('ratePerKg') as string),
       totalAmount: parseFloat(formData.get('totalAmount') as string),
       commission: parseFloat(formData.get('commission') as string),
+      date: formData.get('date') ? new Date(formData.get('date') as string) : undefined,
     });
     redirect(`/customers/${sale!.customerId}`);
   }
@@ -27,11 +28,15 @@ export default async function EditSalePage({ params }: { params: Promise<{ id: s
       <h2 style={{ marginBottom: '1.5rem' }}>Edit Sale</h2>
       <form action={handleUpdate} style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
         <div>
+          <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 500 }}>Date & Time</label>
+          <input type="datetime-local" name="date" defaultValue={sale.date ? new Date(sale.date.getTime() - sale.date.getTimezoneOffset() * 60000).toISOString().slice(0, 16) : ''} style={{ width: '100%', padding: '0.75rem', borderRadius: 'var(--radius)', border: '1px solid var(--border)' }} />
+        </div>
+        <div>
           <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 500 }}>Vegetable *</label>
           <select name="vegetable" defaultValue={sale.vegetable} required style={{ width: '100%', padding: '0.75rem', borderRadius: 'var(--radius)', border: '1px solid var(--border)' }}>
             <option value="">-- Select Vegetable --</option>
-            <option value="CT (Country Tomato)">CT (Country Tomato)</option>
-            <option value="BT (Bangalore Tomato)">BT (Bangalore Tomato)</option>
+            <option value="CT (Carrot)">CT (Carrot)</option>
+            <option value="BT (Beetroot)">BT (Beetroot)</option>
             <option value="Caps (Capsicum)">Caps (Capsicum)</option>
             <option value="CB (Cabbage)">CB (Cabbage)</option>
             <option value="CF (Cauliflower)">CF (Cauliflower)</option>
@@ -69,8 +74,8 @@ export default async function EditSalePage({ params }: { params: Promise<{ id: s
             <input type="number" step="0.01" name="totalAmount" defaultValue={sale.totalAmount} required style={{ width: '100%', padding: '0.75rem', borderRadius: 'var(--radius)', border: '1px solid var(--border)' }} />
           </div>
           <div style={{ flex: 1 }}>
-            <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 500 }}>Commission (₹)</label>
-            <input type="number" step="0.01" name="commission" defaultValue={sale.commission} required style={{ width: '100%', padding: '0.75rem', borderRadius: 'var(--radius)', border: '1px solid var(--border)' }} />
+            <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 500 }}>Number of Boxes</label>
+            <input type="number" name="commission" defaultValue={sale.commission || 0} required min="0" style={{ width: '100%', padding: '0.75rem', borderRadius: 'var(--radius)', border: '1px solid var(--border)' }} />
           </div>
         </div>
         <div style={{ display: 'flex', gap: '1rem', marginTop: '1rem' }}>

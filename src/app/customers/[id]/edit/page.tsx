@@ -16,6 +16,7 @@ export default async function EditCustomerPage({ params }: { params: Promise<{ i
       name: formData.get('name') as string,
       phone: formData.get('phone') as string,
       shopName: formData.get('shopName') as string,
+      createdAt: formData.get('createdAt') ? new Date(formData.get('createdAt') as string) : undefined,
     });
     redirect(`/customers`);
   }
@@ -35,6 +36,10 @@ export default async function EditCustomerPage({ params }: { params: Promise<{ i
         <div>
           <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 500 }}>Shop Name (Optional)</label>
           <input type="text" name="shopName" defaultValue={customer.shopName || ''} style={{ width: '100%', padding: '0.75rem', borderRadius: 'var(--radius)', border: '1px solid var(--border)' }} />
+        </div>
+        <div>
+          <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 500 }}>Added Date & Time</label>
+          <input type="datetime-local" name="createdAt" defaultValue={customer.createdAt ? new Date(customer.createdAt.getTime() - customer.createdAt.getTimezoneOffset() * 60000).toISOString().slice(0, 16) : ''} style={{ width: '100%', padding: '0.75rem', borderRadius: 'var(--radius)', border: '1px solid var(--border)' }} />
         </div>
         <div style={{ display: 'flex', gap: '1rem', marginTop: '1rem' }}>
           <button type="submit" className="btn" style={{ flex: 1 }}>Save Changes</button>

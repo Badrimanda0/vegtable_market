@@ -6,13 +6,12 @@ import { useRouter } from 'next/navigation';
 export default function SaleForm({ customers }: { customers: any[] }) {
   const [qty, setQty] = useState('');
   const [rate, setRate] = useState('');
-  const [commission, setCommission] = useState('0');
+  const [boxes, setBoxes] = useState('0');
   const [loading, setLoading] = useState(false);
   const router = useRouter();
   
   const subtotal = (parseFloat(qty) || 0) * (parseFloat(rate) || 0);
-  const commAmount = parseFloat(commission) || 0;
-  const total = subtotal - commAmount;
+  const total = subtotal;
   
   async function action(formData: FormData) {
     setLoading(true);
@@ -23,6 +22,7 @@ export default function SaleForm({ customers }: { customers: any[] }) {
       ratePerKg: parseFloat(formData.get('ratePerKg') as string),
       totalAmount: total,
       commission: parseFloat(formData.get('commission') as string) || 0,
+      date: formData.get('date') ? new Date(formData.get('date') as string) : new Date(),
     });
     setLoading(false);
     router.push('/customers');
@@ -41,11 +41,17 @@ export default function SaleForm({ customers }: { customers: any[] }) {
       </div>
       
       <div>
+        <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 500 }}>Date & Time</label>
+        <input type="datetime-local" name="date" style={{ width: '100%', padding: '0.75rem', borderRadius: 'var(--radius-md)', border: '1px solid var(--border)' }} />
+        <small style={{ color: 'var(--text-muted)' }}>Leave blank to use current date and time</small>
+      </div>
+      
+      <div>
         <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 500 }}>Vegetable Name *</label>
         <select name="vegetable" required style={{ width: '100%', padding: '0.75rem', borderRadius: 'var(--radius-md)', border: '1px solid var(--border)' }}>
           <option value="">-- Select Vegetable --</option>
-          <option value="CT (Country Tomato)">CT (Country Tomato)</option>
-          <option value="BT (Bangalore Tomato)">BT (Bangalore Tomato)</option>
+          <option value="CRT (Carrot)">CRT (Carrot)</option>
+          <option value="BRT (Beetroot)">BRT (Beetroot)</option>
           <option value="Caps (Capsicum)">Caps (Capsicum)</option>
           <option value="CB (Cabbage)">CB (Cabbage)</option>
           <option value="CF (Cauliflower)">CF (Cauliflower)</option>
@@ -80,8 +86,8 @@ export default function SaleForm({ customers }: { customers: any[] }) {
       </div>
       
       <div>
-        <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 500 }}>Commission Amount (₹) *</label>
-        <input name="commission" type="number" step="0.01" value={commission} onChange={e => setCommission(e.target.value)} required style={{ width: '100%', padding: '0.75rem', borderRadius: 'var(--radius-md)', border: '1px solid var(--border)' }} />
+        <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 500 }}>Number of Boxes *</label>
+        <input name="commission" type="number" value={boxes} onChange={e => setBoxes(e.target.value)} required min="0" style={{ width: '100%', padding: '0.75rem', borderRadius: 'var(--radius-md)', border: '1px solid var(--border)' }} />
       </div>
       
       <div style={{ padding: '1rem', background: 'var(--background)', borderRadius: 'var(--radius-md)', border: '1px solid var(--border)' }}>
@@ -89,9 +95,9 @@ export default function SaleForm({ customers }: { customers: any[] }) {
           <span>Subtotal:</span>
           <span>₹{subtotal.toFixed(2)}</span>
         </div>
-        <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '0.5rem', color: 'var(--danger)' }}>
-          <span>Commission:</span>
-          <span>-₹{commAmount.toFixed(2)}</span>
+        <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '0.5rem', color: 'var(--foreground)' }}>
+          <span>Boxes:</span>
+          <span>{boxes}</span>
         </div>
         <div style={{ borderTop: '1px solid var(--border)', margin: '0.5rem 0' }}></div>
         <div style={{ fontSize: '0.9rem', color: 'var(--text-muted)', textTransform: 'uppercase', fontWeight: 600 }}>Net Total Amount</div>
