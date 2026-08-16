@@ -2,6 +2,8 @@
 
 import { prisma } from '@/lib/prisma';
 import { revalidatePath } from 'next/cache';
+import { writeFile } from 'fs/promises';
+import path from 'path';
 
 export async function getDashboardStats() {
   const [sales, payments] = await Promise.all([
@@ -81,7 +83,29 @@ export async function createCustomer(data: { name: string; phone?: string; shopN
   return customer;
 }
 
-export async function createSale(data: { customerId: number; vegetable: string; quantityKg: number; ratePerKg: number; totalAmount: number; commission: number; date?: Date }) {
+export async function createSale(formData: FormData) {
+  let billImageUrl: string | null = null;
+  const billImage = formData.get('billImage') as File | null;
+  
+  if (billImage && billImage.size > 0) {
+    const buffer = Buffer.from(await billImage.arrayBuffer());
+    const filename = `${Date.now()}-${billImage.name.replace(/\s/g, '_')}`;
+    const filepath = path.join(process.cwd(), 'public', 'uploads', filename);
+    await writeFile(filepath, buffer);
+    billImageUrl = `/uploads/${filename}`;
+  }
+
+  const data = {
+    customerId: parseInt(formData.get('customerId') as string),
+    vegetable: formData.get('vegetable') as string,
+    quantityKg: parseFloat(formData.get('quantityKg') as string),
+    ratePerKg: parseFloat(formData.get('ratePerKg') as string),
+    totalAmount: parseFloat(formData.get('totalAmount') as string),
+    commission: parseFloat(formData.get('commission') as string) || 0,
+    date: formData.get('date') ? new Date(formData.get('date') as string) : new Date(),
+    billImage: billImageUrl,
+  };
+
   const sale = await prisma.sale.create({ data });
   revalidatePath('/');
   revalidatePath('/customers');
@@ -90,7 +114,26 @@ export async function createSale(data: { customerId: number; vegetable: string; 
   return sale;
 }
 
-export async function createPayment(data: { customerId: number; amount: number; date?: Date }) {
+export async function createPayment(formData: FormData) {
+  let receiptImageUrl: string | null = null;
+  const receiptImage = formData.get('receiptImage') as File | null;
+  
+  if (receiptImage && receiptImage.size > 0) {
+    const buffer = Buffer.from(await receiptImage.arrayBuffer());
+    const filename = `${Date.now()}-${receiptImage.name.replace(/\s/g, '_')}`;
+    const filepath = path.join(process.cwd(), 'public', 'uploads', filename);
+    await writeFile(filepath, buffer);
+    receiptImageUrl = `/uploads/${filename}`;
+  }
+
+  const data = {
+    customerId: parseInt(formData.get('customerId') as string),
+    amount: parseFloat(formData.get('amount') as string),
+    date: formData.get('date') ? new Date(formData.get('date') as string) : new Date(),
+    receiptImage: receiptImageUrl,
+    senderName: formData.get('senderName') as string | null,
+  };
+
   const payment = await prisma.payment.create({ data });
   revalidatePath('/');
   revalidatePath('/customers');
@@ -189,4 +232,13 @@ export async function updatePayment(id: number, data: { amount: number; date?: D
   revalidatePath('/reports');
   revalidatePath(`/customers/${payment.customerId}`);
   return payment;
+}
+
+export async function getRecentBills() {
+  return prisma.sale.findMany({
+    where: { billImage: { not: null } },
+    orderBy: { date: 'desc' },
+    take: 6,
+    include: { customer: true }
+  });
 }

@@ -27,15 +27,18 @@ model Sale {
   totalAmount Float
   commission  Float    @default(0)
   date        DateTime @default(now())
+  billImage   String?
 
   customer    Customer @relation(fields: [customerId], references: [id])
 }
 
 model Payment {
-  id         Int      @id @default(autoincrement())
-  customerId Int
-  amount     Float
-  date       DateTime @default(now())
+  id           Int      @id @default(autoincrement())
+  customerId   Int
+  amount       Float
+  date         DateTime @default(now())
+  receiptImage String?
+  senderName   String?
 
   customer   Customer @relation(fields: [customerId], references: [id])
 }

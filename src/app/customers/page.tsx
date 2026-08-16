@@ -1,5 +1,6 @@
 import { getCustomers, deleteCustomer } from '../actions';
 import NewCustomerForm from './NewCustomerForm';
+import CustomerList from './CustomerList';
 import Link from 'next/link';
 import DeleteButton from '../delete-button';
 
@@ -20,44 +21,8 @@ export default async function CustomersPage() {
       
       <div className="page-grid">
         <div>
-          <div className="card" style={{ padding: 0 }}>
-            <div className="table-responsive">
-            <table className="mobile-table" style={{ width: '100%', borderCollapse: 'collapse' }}>
-              <thead style={{ background: 'var(--background)', borderBottom: '1px solid var(--border)', textAlign: 'left' }}>
-                <tr>
-                  <th style={{ padding: '1rem' }}>Name</th>
-                  <th style={{ padding: '1rem' }}>Phone</th>
-                  <th style={{ padding: '1rem' }}>Pending Amount</th>
-                  <th style={{ padding: '1rem' }}>Actions</th>
-                </tr>
-              </thead>
-              <tbody>
-                {customers.map((c: any) => (
-                  <tr key={c.id} style={{ borderBottom: '1px solid var(--border)' }}>
-                    <td data-label="Name" style={{ padding: '1rem', fontWeight: 500 }}>
-                      <Link href={`/customers/${c.id}`} style={{ color: 'var(--primary)' }}>{c.name}</Link>
-                    </td>
-                    <td data-label="Phone" style={{ padding: '1rem' }}>{c.phone || '-'}</td>
-                    <td data-label="Pending Amount" style={{ padding: '1rem', color: c.pendingAmount > 0 ? 'var(--danger)' : c.pendingAmount < 0 ? 'var(--success)' : 'var(--text-muted)', fontWeight: 600 }}>
-                      {c.pendingAmount < 0 ? `Advance: ${formatCurrency(Math.abs(c.pendingAmount))}` : formatCurrency(c.pendingAmount)}
-                    </td>
-                    <td data-label="Actions" style={{ padding: '1rem' }}>
-                      <div style={{ display: 'flex', gap: '0.5rem' }}>
-                        <Link href={`/customers/${c.id}`} className="btn" style={{ padding: '0.4rem 0.8rem', fontSize: '0.8rem' }}>Ledger</Link>
-                        <Link href={`/customers/${c.id}/edit`} className="btn" style={{ padding: '0.4rem 0.8rem', fontSize: '0.8rem', background: 'var(--foreground)' }}>Edit</Link>
-                        <DeleteButton action={deleteCustomer.bind(null, c.id)} itemType="Customer" />
-                      </div>
-                    </td>
-                  </tr>
-                ))}
-                {customers.length === 0 && (
-                  <tr>
-                    <td colSpan={4} style={{ padding: '2rem', textAlign: 'center', color: 'var(--text-muted)' }}>No customers found. Add one to get started!</td>
-                  </tr>
-                )}
-              </tbody>
-            </table>
-            </div>
+          <div className="card" style={{ padding: '1rem' }}>
+            <CustomerList customers={customers} />
           </div>
         </div>
         

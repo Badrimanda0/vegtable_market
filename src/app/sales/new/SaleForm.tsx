@@ -15,15 +15,8 @@ export default function SaleForm({ customers }: { customers: any[] }) {
   
   async function action(formData: FormData) {
     setLoading(true);
-    await createSale({
-      customerId: parseInt(formData.get('customerId') as string),
-      vegetable: formData.get('vegetable') as string,
-      quantityKg: parseFloat(formData.get('quantityKg') as string),
-      ratePerKg: parseFloat(formData.get('ratePerKg') as string),
-      totalAmount: total,
-      commission: parseFloat(formData.get('commission') as string) || 0,
-      date: formData.get('date') ? new Date(formData.get('date') as string) : new Date(),
-    });
+    formData.append('totalAmount', total.toString());
+    await createSale(formData);
     setLoading(false);
     router.push('/customers');
   }
@@ -85,23 +78,21 @@ export default function SaleForm({ customers }: { customers: any[] }) {
         </div>
       </div>
       
+      {total > 0 && (
+        <div style={{ padding: '1.25rem', background: 'rgba(0,0,0,0.02)', borderRadius: 'var(--radius-md)', border: '1px dashed var(--border)', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+          <span style={{ fontWeight: 500, color: 'var(--text-muted)' }}>Calculated Total Amount:</span>
+          <span style={{ fontSize: '1.5rem', fontWeight: 'bold', color: 'var(--foreground)' }}>₹{total.toFixed(2)}</span>
+        </div>
+      )}
+
       <div>
         <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 500 }}>Number of Boxes *</label>
         <input name="commission" type="number" value={boxes} onChange={e => setBoxes(e.target.value)} required min="0" style={{ width: '100%', padding: '0.75rem', borderRadius: 'var(--radius-md)', border: '1px solid var(--border)' }} />
       </div>
       
-      <div style={{ padding: '1rem', background: 'var(--background)', borderRadius: 'var(--radius-md)', border: '1px solid var(--border)' }}>
-        <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '0.5rem', color: 'var(--text-muted)' }}>
-          <span>Subtotal:</span>
-          <span>₹{subtotal.toFixed(2)}</span>
-        </div>
-        <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '0.5rem', color: 'var(--foreground)' }}>
-          <span>Boxes:</span>
-          <span>{boxes}</span>
-        </div>
-        <div style={{ borderTop: '1px solid var(--border)', margin: '0.5rem 0' }}></div>
-        <div style={{ fontSize: '0.9rem', color: 'var(--text-muted)', textTransform: 'uppercase', fontWeight: 600 }}>Net Total Amount</div>
-        <div style={{ fontSize: '2rem', fontWeight: 700, color: 'var(--primary)' }}>₹{total.toFixed(2)}</div>
+      <div>
+        <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 500 }}>Upload Bill/Item Image</label>
+        <input type="file" name="billImage" accept="image/*" style={{ width: '100%', padding: '0.75rem', borderRadius: 'var(--radius-md)', border: '1px solid var(--border)', background: 'var(--background)' }} />
       </div>
       
       <button type="submit" className="btn" disabled={loading} style={{ marginTop: '0.5rem' }}>
