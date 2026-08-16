@@ -62,7 +62,14 @@ export default async function CustomerLedgerPage({ params }: { params: Promise<{
               <tr key={`sale-${s.id}`} style={{ borderBottom: '1px solid var(--border)' }}>
                 <td style={{ padding: '1rem' }}>{formatDate(s.date)}</td>
                 <td style={{ padding: '1rem' }}><span style={{ padding: '0.2rem 0.6rem', background: '#fef2f2', color: 'var(--danger)', borderRadius: '1rem', fontSize: '0.8rem', fontWeight: 600 }}>Sale</span></td>
-                <td style={{ padding: '1rem' }}>{s.quantityKg} KG {s.vegetable} @ ₹{s.ratePerKg}</td>
+                <td style={{ padding: '1rem' }}>
+                  {s.quantityKg} KG {s.vegetable} @ ₹{s.ratePerKg}
+                  {s.billImage && (
+                    <div style={{ marginTop: '0.25rem' }}>
+                      <a href={s.billImage} target="_blank" rel="noopener noreferrer" style={{ fontSize: '0.8rem', color: 'var(--primary)', textDecoration: 'underline' }}>View Bill Image</a>
+                    </div>
+                  )}
+                </td>
                 <td style={{ padding: '1rem', textAlign: 'right', fontWeight: 600, color: 'var(--danger)' }}>+{formatCurrency(s.totalAmount)}</td>
                 <td style={{ padding: '1rem' }}>
                   <div style={{ display: 'flex', gap: '0.5rem' }}>
@@ -76,7 +83,14 @@ export default async function CustomerLedgerPage({ params }: { params: Promise<{
               <tr key={`pay-${p.id}`} style={{ borderBottom: '1px solid var(--border)' }}>
                 <td style={{ padding: '1rem' }}>{formatDate(p.date)}</td>
                 <td style={{ padding: '1rem' }}><span style={{ padding: '0.2rem 0.6rem', background: '#ecfdf5', color: 'var(--primary)', borderRadius: '1rem', fontSize: '0.8rem', fontWeight: 600 }}>Payment</span></td>
-                <td style={{ padding: '1rem' }}>Payment Received</td>
+                <td style={{ padding: '1rem' }}>
+                  Payment Received {p.senderName ? `(from: ${p.senderName})` : ''}
+                  {p.receiptImage && (
+                    <div style={{ marginTop: '0.25rem' }}>
+                      <a href={p.receiptImage} target="_blank" rel="noopener noreferrer" style={{ fontSize: '0.8rem', color: 'var(--primary)', textDecoration: 'underline' }}>View Receipt</a>
+                    </div>
+                  )}
+                </td>
                 <td style={{ padding: '1rem', textAlign: 'right', fontWeight: 600, color: 'var(--primary)' }}>-{formatCurrency(p.amount)}</td>
                 <td style={{ padding: '1rem' }}>
                   <div style={{ display: 'flex', gap: '0.5rem' }}>

@@ -9,11 +9,7 @@ export default function PaymentForm({ customers }: { customers: any[] }) {
   
   async function action(formData: FormData) {
     setLoading(true);
-    await createPayment({
-      customerId: parseInt(formData.get('customerId') as string),
-      amount: parseFloat(formData.get('amount') as string),
-      date: formData.get('date') ? new Date(formData.get('date') as string) : new Date(),
-    });
+    await createPayment(formData);
     setLoading(false);
     router.push('/customers');
   }
@@ -39,6 +35,16 @@ export default function PaymentForm({ customers }: { customers: any[] }) {
       <div>
         <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 500 }}>Amount Received (₹) *</label>
         <input name="amount" type="number" step="0.01" required style={{ width: '100%', padding: '0.75rem', borderRadius: 'var(--radius-md)', border: '1px solid var(--border)' }} />
+      </div>
+
+      <div>
+        <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 500 }}>Sender Name (Who sent the money)</label>
+        <input type="text" name="senderName" placeholder="e.g. Ramesh" style={{ width: '100%', padding: '0.75rem', borderRadius: 'var(--radius-md)', border: '1px solid var(--border)' }} />
+      </div>
+
+      <div>
+        <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 500 }}>Upload Transaction Receipt</label>
+        <input type="file" name="receiptImage" accept="image/*" style={{ width: '100%', padding: '0.75rem', borderRadius: 'var(--radius-md)', border: '1px solid var(--border)', background: 'var(--background)' }} />
       </div>
       
       <button type="submit" className="btn" disabled={loading} style={{ marginTop: '0.5rem' }}>
