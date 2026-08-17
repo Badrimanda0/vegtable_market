@@ -21,7 +21,6 @@ export default function Navbar() {
           ☰
         </button>
       </div>
-      
       <div className={`nav-links ${isOpen ? "open" : ""}`}>
         <Link href="/" className={`nav-link ${pathname === '/' ? 'active' : ''}`} onClick={closeMenu}>Dashboard</Link>
         <Link href="/customers" className={`nav-link ${pathname === '/customers' ? 'active' : ''}`} onClick={closeMenu}>Customers</Link>
@@ -29,6 +28,8 @@ export default function Navbar() {
         <Link href="/payments/new" className={`nav-link ${pathname === '/payments/new' ? 'active' : ''}`} onClick={closeMenu}>Receive Payment</Link>
         <Link href="/reports" className={`nav-link ${pathname === '/reports' ? 'active' : ''}`} onClick={closeMenu}>Daily Reports</Link>
         <Link href="/gallery" className={`nav-link ${pathname === '/gallery' ? 'active' : ''}`} onClick={closeMenu}>Gallery</Link>
+        <Link href="/expenses" className={`nav-link ${pathname === '/expenses' ? 'active' : ''}`} onClick={closeMenu}>Expenses</Link>
+        <Link href="/orders" className={`nav-link ${pathname === '/orders' ? 'active' : ''}`} onClick={closeMenu}>Orders</Link>
       </div>
     </nav>
   );

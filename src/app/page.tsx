@@ -73,20 +73,22 @@ export default async function Dashboard() {
       </div>
 
       {recentBills.length > 0 && (
-        <div className="card" style={{ marginTop: '2rem' }}>
-          <h3>Recently Uploaded Bills</h3>
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(250px, 1fr))', gap: '1rem', marginTop: '1rem' }}>
-            {recentBills.map((bill: any) => (
-              <div key={bill.id} style={{ border: '1px solid var(--border)', borderRadius: 'var(--radius)', overflow: 'hidden' }}>
-                <div style={{ padding: '0.75rem', borderBottom: '1px solid var(--border)', background: 'var(--background)' }}>
-                  <div style={{ fontWeight: 600 }}>{bill.customer.name}</div>
-                  <div style={{ fontSize: '0.85rem', color: 'var(--text-muted)' }}>{formatDate(bill.date)}</div>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(350px, 1fr))', gap: '2rem', marginTop: '2rem' }}>
+          <div className="card">
+            <h3>Recently Uploaded Bills</h3>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(150px, 1fr))', gap: '1rem', marginTop: '1rem' }}>
+              {recentBills.map((bill: any) => (
+                <div key={bill.id} style={{ border: '1px solid var(--border)', borderRadius: 'var(--radius)', overflow: 'hidden' }}>
+                  <div style={{ padding: '0.75rem', borderBottom: '1px solid var(--border)', background: 'var(--background)' }}>
+                    <div style={{ fontWeight: 600 }}>{bill.customer.name}</div>
+                    <div style={{ fontSize: '0.85rem', color: 'var(--text-muted)' }}>{formatDate(bill.date)}</div>
+                  </div>
+                  <div style={{ position: 'relative', width: '100%', height: '150px', background: '#f5f5f5' }}>
+                    <img src={bill.billImage} alt={`Bill for ${bill.customer.name}`} style={{ width: '100%', height: '100%', objectFit: 'contain' }} />
+                  </div>
                 </div>
-                <div style={{ position: 'relative', width: '100%', height: '200px', background: '#f5f5f5' }}>
-                  <img src={bill.billImage} alt={`Bill for ${bill.customer.name}`} style={{ width: '100%', height: '100%', objectFit: 'contain' }} />
-                </div>
-              </div>
-            ))}
+              ))}
+            </div>
           </div>
         </div>
       )}

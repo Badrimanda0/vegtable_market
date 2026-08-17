@@ -298,3 +298,93 @@ export async function getImagesGroupedByDate() {
     };
   });
 }
+
+// --- Expenses & Funds ---
+
+export async function getExpenseStats() {
+  const [funds, expenses] = await Promise.all([
+    prisma.companyFund.aggregate({ _sum: { amount: true } }),
+    prisma.expense.aggregate({ _sum: { amount: true } })
+  ]);
+
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+
+  const startOfMonth = new Date(today.getFullYear(), today.getMonth(), 1);
+
+  const [todayExpenses, monthExpenses] = await Promise.all([
+    prisma.expense.aggregate({
+      where: { date: { gte: today } },
+      _sum: { amount: true }
+    }),
+    prisma.expense.aggregate({
+      where: { date: { gte: startOfMonth } },
+      _sum: { amount: true }
+    })
+  ]);
+
+  const totalFunds = funds._sum.amount || 0;
+  const totalExpenses = expenses._sum.amount || 0;
+
+  return {
+    totalFunds,
+    totalExpenses,
+    remainingBalance: totalFunds - totalExpenses,
+    todayExpenses: todayExpenses._sum.amount || 0,
+    monthExpenses: monthExpenses._sum.amount || 0
+  };
+}
+
+export async function createCompanyFund(data: { amount: number; description?: string }) {
+  const fund = await prisma.companyFund.create({ data });
+  revalidatePath('/');
+  return fund;
+}
+
+export async function createExpense(data: { amount: number; description?: string }) {
+  const expense = await prisma.expense.create({ data });
+  revalidatePath('/');
+  return expense;
+}
+
+export async function getRecentExpensesAndFunds() {
+  const [funds, expenses] = await Promise.all([
+    prisma.companyFund.findMany({ orderBy: { date: 'desc' }, take: 5 }),
+    prisma.expense.findMany({ orderBy: { date: 'desc' }, take: 5 })
+  ]);
+  return { funds, expenses };
+}
+
+export async function deleteCompanyFund(id: number) {
+  await prisma.companyFund.delete({ where: { id } });
+  revalidatePath('/');
+}
+
+export async function deleteExpense(id: number) {
+  await prisma.expense.delete({ where: { id } });
+  revalidatePath('/');
+}
+
+// --- Orders ---
+
+export async function getOrders() {
+  const orders = await prisma.order.findMany({
+    orderBy: { date: 'desc' }
+  });
+  
+  const totalOrders = orders.length;
+  const totalAmount = orders.reduce((sum, order) => sum + order.amount, 0);
+
+  return { orders, totalOrders, totalAmount };
+}
+
+export async function createOrder(data: { shopName: string; itemName: string; quantity: number; amount: number; date?: Date }) {
+  const order = await prisma.order.create({ data });
+  revalidatePath('/orders');
+  return order;
+}
+
+export async function deleteOrder(id: number) {
+  await prisma.order.delete({ where: { id } });
+  revalidatePath('/orders');
+}
