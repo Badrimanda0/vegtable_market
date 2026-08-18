@@ -403,13 +403,11 @@ export async function getTodayOrder1s() {
     },
     orderBy: { date: 'desc' }
   });
-  
-  const totalToday = orders.reduce((sum, order) => sum + order.total, 0);
 
-  return { orders, totalToday };
+  return { orders };
 }
 
-export async function createOrder1(data: { vegetableOption: string; numberOfVegetables: number; total: number; date?: Date }) {
+export async function createOrder1(data: { vegetableOption: string; numberOfVegetables: number; date?: Date }) {
   const order = await prisma.order1.create({ data });
   revalidatePath('/order1');
   return order;

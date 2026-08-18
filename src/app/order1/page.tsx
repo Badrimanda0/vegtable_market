@@ -5,23 +5,13 @@ import DeleteButton from '../delete-button';
 export const dynamic = 'force-dynamic';
 
 export default async function Order1Page() {
-  const { orders, totalToday } = await getTodayOrder1s();
-
-  const formatCurrency = (amount: number) => {
-    return new Intl.NumberFormat('en-IN', {
-      style: 'currency',
-      currency: 'INR',
-      maximumFractionDigits: 0
-    }).format(amount);
-  };
+  const { orders } = await getTodayOrder1s();
 
   const formatDate = (date: Date) => {
     return new Intl.DateTimeFormat('en-IN', {
       day: 'numeric',
       month: 'short',
-      year: 'numeric',
-      hour: '2-digit',
-      minute: '2-digit'
+      year: 'numeric'
     }).format(date);
   };
 
@@ -29,32 +19,10 @@ export default async function Order1Page() {
     <div>
       <h1 className="page-title">Today Order</h1>
 
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(350px, 1fr))', gap: '2rem', marginTop: '2rem' }}>
+      <div style={{ display: 'grid', gridTemplateColumns: '1fr', gap: '2rem', marginTop: '2rem' }}>
         <div className="card">
           <h3 style={{ marginBottom: '1.5rem', borderBottom: '1px solid var(--border)', paddingBottom: '0.5rem' }}>Today Order</h3>
           <Order1Actions />
-        </div>
-
-        <div className="card" style={{ display: 'flex', flexDirection: 'column' }}>
-          <h3 style={{ marginBottom: '1.5rem', borderBottom: '1px solid var(--border)', paddingBottom: '0.5rem' }}>Today total</h3>
-          <div style={{ 
-            flex: 1, 
-            display: 'flex', 
-            alignItems: 'center', 
-            justifyContent: 'center',
-            padding: '2rem', 
-            background: 'var(--background)', 
-            borderRadius: 'var(--radius)', 
-            border: '1px solid var(--border)',
-            margin: 'auto 0'
-          }}>
-            <div style={{ textAlign: 'center' }}>
-              <div style={{ fontSize: '1rem', color: 'var(--text-muted)', marginBottom: '0.5rem' }}>Total Amount</div>
-              <div style={{ fontSize: '2.5rem', fontWeight: 700, color: 'var(--primary)' }}>
-                {formatCurrency(totalToday)}
-              </div>
-            </div>
-          </div>
         </div>
       </div>
 
@@ -71,7 +39,6 @@ export default async function Order1Page() {
                 <div style={{ fontSize: '0.85rem', color: 'var(--text-muted)' }}>{formatDate(order.date)}</div>
               </div>
               <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: '0.5rem' }}>
-                <div style={{ fontWeight: 600, color: 'var(--primary)' }}>{formatCurrency(order.total)}</div>
                 <DeleteButton action={async () => { 'use server'; await deleteOrder1(order.id); }} itemType="Order" />
               </div>
             </div>
