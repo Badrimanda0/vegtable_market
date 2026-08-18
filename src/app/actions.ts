@@ -407,6 +407,14 @@ export async function getTodayOrder1s() {
   return { orders };
 }
 
+export async function getAllOrder1s() {
+  const orders = await prisma.order1.findMany({
+    orderBy: { date: 'desc' }
+  });
+
+  return { orders };
+}
+
 export async function createOrder1(data: { vegetableOption: string; numberOfVegetables: number; date?: Date }) {
   const order = await prisma.order1.create({ data });
   revalidatePath('/order1');
