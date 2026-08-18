@@ -6,7 +6,6 @@ import { createOrder1 } from './../actions';
 export default function Order1Actions() {
   const [vegetableOption, setVegetableOption] = useState('');
   const [numberOfVegetables, setNumberOfVegetables] = useState('');
-  const [total, setTotal] = useState('');
   const [date, setDate] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState('');
@@ -18,22 +17,19 @@ export default function Order1Actions() {
 
     try {
       const numVeg = parseFloat(numberOfVegetables);
-      const totalAmt = parseFloat(total);
 
-      if (!vegetableOption || isNaN(numVeg) || isNaN(totalAmt)) {
+      if (!vegetableOption || isNaN(numVeg)) {
         throw new Error('Please fill all fields correctly');
       }
 
       await createOrder1({
         vegetableOption,
         numberOfVegetables: numVeg,
-        total: totalAmt,
         date: date ? new Date(date) : new Date()
       });
 
       setVegetableOption('');
       setNumberOfVegetables('');
-      setTotal('');
       setDate('');
     } catch (err: any) {
       setError(err.message || 'Something went wrong');
@@ -74,29 +70,15 @@ export default function Order1Actions() {
       </div>
 
       <div className="form-group">
-        <label className="form-label" htmlFor="total">Total</label>
-        <input 
-          id="total"
-          type="number" 
-          className="form-control"
-          step="0.01"
-          placeholder="₹ 0.00"
-          value={total}
-          onChange={(e) => setTotal(e.target.value)}
-          required
-        />
-      </div>
-
-      <div className="form-group">
-        <label className="form-label" htmlFor="date">Date & Time</label>
+        <label className="form-label" htmlFor="date">Date</label>
         <input 
           id="date"
-          type="datetime-local" 
+          type="date" 
           className="form-control"
           value={date}
           onChange={(e) => setDate(e.target.value)}
         />
-        <span style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>Leave blank to use current time</span>
+        <span style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>Leave blank to use current date</span>
       </div>
 
       <button type="submit" className="btn" disabled={isLoading} style={{ marginTop: '0.5rem', width: '100%' }}>
