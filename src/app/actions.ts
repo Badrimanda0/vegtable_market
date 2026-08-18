@@ -388,3 +388,34 @@ export async function deleteOrder(id: number) {
   await prisma.order.delete({ where: { id } });
   revalidatePath('/orders');
 }
+
+// --- Order 1 ---
+
+export async function getTodayOrder1s() {
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+
+  const orders = await prisma.order1.findMany({
+    where: {
+      date: {
+        gte: today,
+      },
+    },
+    orderBy: { date: 'desc' }
+  });
+  
+  const totalToday = orders.reduce((sum, order) => sum + order.total, 0);
+
+  return { orders, totalToday };
+}
+
+export async function createOrder1(data: { vegetableOption: string; numberOfVegetables: number; total: number; date?: Date }) {
+  const order = await prisma.order1.create({ data });
+  revalidatePath('/order1');
+  return order;
+}
+
+export async function deleteOrder1(id: number) {
+  await prisma.order1.delete({ where: { id } });
+  revalidatePath('/order1');
+}

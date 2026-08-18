@@ -30,6 +30,7 @@ export default function Navbar() {
         <Link href="/gallery" className={`nav-link ${pathname === '/gallery' ? 'active' : ''}`} onClick={closeMenu}>Gallery</Link>
         <Link href="/expenses" className={`nav-link ${pathname === '/expenses' ? 'active' : ''}`} onClick={closeMenu}>Expenses</Link>
         <Link href="/orders" className={`nav-link ${pathname === '/orders' ? 'active' : ''}`} onClick={closeMenu}>Orders</Link>
+        <Link href="/order1" className={`nav-link ${pathname === '/order1' ? 'active' : ''}`} onClick={closeMenu}>Order 1</Link>
       </div>
     </nav>
   );

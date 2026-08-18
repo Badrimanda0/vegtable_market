@@ -65,3 +65,11 @@ model Order {
   amount      Float
   date        DateTime @default(now())
 }
+
+model Order1 {
+  id                 Int      @id @default(autoincrement())
+  vegetableOption    String
+  numberOfVegetables Float
+  total              Float
+  date               DateTime @default(now())
+}
