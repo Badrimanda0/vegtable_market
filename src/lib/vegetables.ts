@@ -22,5 +22,5 @@ export const VEGETABLE_OPTIONS = [
   'Gummadi (Pumpkin)',
   'Coolie',
   'Sweetcorn',
-  'cash',
+  'cash'
 ];

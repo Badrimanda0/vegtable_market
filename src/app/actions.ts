@@ -4,6 +4,7 @@ import { prisma } from '@/lib/prisma';
 import { revalidatePath } from 'next/cache';
 import { writeFile } from 'fs/promises';
 import path from 'path';
+import { formatDateKey, parseDateKey } from '@/lib/date-utils';
 
 export async function getDashboardStats() {
   const [sales, payments] = await Promise.all([
@@ -138,34 +139,295 @@ export async function createPayment(formData: FormData) {
   return payment;
 }
 
+
+
 export async function getDailyReports() {
-  const sales = await prisma.sale.findMany();
-  const payments = await prisma.payment.findMany();
+  const [sales, payments, expenses, companyFunds, orders, order1s] = await Promise.all([
+    prisma.sale.findMany(),
+    prisma.payment.findMany(),
+    prisma.expense.findMany(),
+    prisma.companyFund.findMany(),
+    prisma.order.findMany(),
+    prisma.order1.findMany()
+  ]);
 
-  const reports: Record<string, { date: Date; totalSales: number; totalCommission: number; totalReceived: number; pendingGenerated: number }> = {};
+  const reports: Record<string, {
+    date: Date;
+    dateKey: string;
+    totalSales: number;
+    salesCount: number;
+    totalCommission: number;
+    totalReceived: number;
+    paymentsCount: number;
+    totalExpenses: number;
+    expensesCount: number;
+    totalFunds: number;
+    fundsCount: number;
+    totalOrders: number;
+    ordersCount: number;
+    order1sCount: number;
+    totalActivities: number;
+    pendingGenerated: number;
+  }> = {};
 
-  const formatDate = (d: Date) => {
-    const date = new Date(d);
-    date.setHours(0, 0, 0, 0);
-    return date.toISOString();
+  const initReport = (key: string, rawDate: Date) => {
+    if (!reports[key]) {
+      const { date } = parseDateKey(key);
+      reports[key] = {
+        date: isNaN(date.getTime()) ? new Date(rawDate) : date,
+        dateKey: key,
+        totalSales: 0,
+        salesCount: 0,
+        totalCommission: 0,
+        totalReceived: 0,
+        paymentsCount: 0,
+        totalExpenses: 0,
+        expensesCount: 0,
+        totalFunds: 0,
+        fundsCount: 0,
+        totalOrders: 0,
+        ordersCount: 0,
+        order1sCount: 0,
+        totalActivities: 0,
+        pendingGenerated: 0
+      };
+    }
+    return reports[key];
   };
 
   for (const sale of sales) {
-    const key = formatDate(sale.date);
-    if (!reports[key]) reports[key] = { date: new Date(key), totalSales: 0, totalCommission: 0, totalReceived: 0, pendingGenerated: 0 };
-    reports[key].totalSales += sale.totalAmount;
-    reports[key].totalCommission += sale.commission;
-    reports[key].pendingGenerated += sale.totalAmount;
+    const key = formatDateKey(sale.date);
+    const r = initReport(key, sale.date);
+    r.totalSales += sale.totalAmount;
+    r.salesCount += 1;
+    r.totalCommission += (sale.commission || 0);
+    r.pendingGenerated += sale.totalAmount;
+    r.totalActivities += 1;
   }
 
   for (const payment of payments) {
-    const key = formatDate(payment.date);
-    if (!reports[key]) reports[key] = { date: new Date(key), totalSales: 0, totalCommission: 0, totalReceived: 0, pendingGenerated: 0 };
-    reports[key].totalReceived += payment.amount;
-    reports[key].pendingGenerated -= payment.amount;
+    const key = formatDateKey(payment.date);
+    const r = initReport(key, payment.date);
+    r.totalReceived += payment.amount;
+    r.paymentsCount += 1;
+    r.pendingGenerated -= payment.amount;
+    r.totalActivities += 1;
+  }
+
+  for (const exp of expenses) {
+    const key = formatDateKey(exp.date);
+    const r = initReport(key, exp.date);
+    r.totalExpenses += exp.amount;
+    r.expensesCount += 1;
+    r.totalActivities += 1;
+  }
+
+  for (const fund of companyFunds) {
+    const key = formatDateKey(fund.date);
+    const r = initReport(key, fund.date);
+    r.totalFunds += fund.amount;
+    r.fundsCount += 1;
+    r.totalActivities += 1;
+  }
+
+  for (const order of orders) {
+    const key = formatDateKey(order.date);
+    const r = initReport(key, order.date);
+    r.totalOrders += order.amount;
+    r.ordersCount += 1;
+    r.totalActivities += 1;
+  }
+
+  for (const o1 of order1s) {
+    const key = formatDateKey(o1.date);
+    const r = initReport(key, o1.date);
+    r.order1sCount += 1;
+    r.totalActivities += 1;
   }
 
   return Object.values(reports).sort((a, b) => b.date.getTime() - a.date.getTime());
+}
+
+export async function getDailyActivityDetails(dateKey: string) {
+  const { year, month, day, date } = parseDateKey(dateKey);
+  const targetKey = `${year}-${String(month).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+
+  const [sales, payments, expenses, companyFunds, orders, order1s] = await Promise.all([
+    prisma.sale.findMany({
+      include: { customer: true },
+      orderBy: { date: 'desc' }
+    }),
+    prisma.payment.findMany({
+      include: { customer: true },
+      orderBy: { date: 'desc' }
+    }),
+    prisma.expense.findMany({
+      orderBy: { date: 'desc' }
+    }),
+    prisma.companyFund.findMany({
+      orderBy: { date: 'desc' }
+    }),
+    prisma.order.findMany({
+      orderBy: { date: 'desc' }
+    }),
+    prisma.order1.findMany({
+      orderBy: { date: 'desc' }
+    })
+  ]);
+
+  const daySales = sales.filter(s => formatDateKey(s.date) === targetKey);
+  const dayPayments = payments.filter(p => formatDateKey(p.date) === targetKey);
+  const dayExpenses = expenses.filter(e => formatDateKey(e.date) === targetKey);
+  const dayFunds = companyFunds.filter(f => formatDateKey(f.date) === targetKey);
+  const dayOrders = orders.filter(o => formatDateKey(o.date) === targetKey);
+  const dayOrder1s = order1s.filter(o => formatDateKey(o.date) === targetKey);
+
+  const totalSales = daySales.reduce((sum, s) => sum + s.totalAmount, 0);
+  const totalBoxes = daySales.reduce((sum, s) => sum + (s.commission || 0), 0);
+  const totalReceived = dayPayments.reduce((sum, p) => sum + p.amount, 0);
+  const totalExpenses = dayExpenses.reduce((sum, e) => sum + e.amount, 0);
+  const totalFunds = dayFunds.reduce((sum, f) => sum + f.amount, 0);
+  const totalOrdersAmount = dayOrders.reduce((sum, o) => sum + o.amount, 0);
+  const totalOrder1Boxes = dayOrder1s.reduce((sum, o) => sum + (o.numberOfVegetables || 0), 0);
+
+  const totalActivities = daySales.length + dayPayments.length + dayExpenses.length + dayFunds.length + dayOrders.length + dayOrder1s.length;
+  const pendingGenerated = totalSales - totalReceived;
+  const netCashFlow = totalReceived + totalFunds - totalExpenses;
+
+  // Build unified chronological timeline
+  const timeline: Array<{
+    id: string;
+    type: 'sale' | 'payment' | 'expense' | 'fund' | 'order' | 'order1';
+    title: string;
+    subtitle: string;
+    amount?: number;
+    badge: string;
+    badgeColor: string;
+    badgeBg: string;
+    date: Date;
+    details: any;
+  }> = [];
+
+  daySales.forEach(s => {
+    timeline.push({
+      id: `sale-${s.id}`,
+      type: 'sale',
+      title: `Sale: ${s.customer?.name || 'Customer'}`,
+      subtitle: `${s.quantityKg} KG ${s.vegetable} @ ₹${s.ratePerKg}${s.commission ? ` • ${s.commission} Boxes` : ''}`,
+      amount: s.totalAmount,
+      badge: 'Sale',
+      badgeColor: '#b91c1c',
+      badgeBg: '#fef2f2',
+      date: s.date,
+      details: s,
+    });
+  });
+
+  dayPayments.forEach(p => {
+    timeline.push({
+      id: `pay-${p.id}`,
+      type: 'payment',
+      title: `Payment: ${p.customer?.name || 'Customer'}`,
+      subtitle: p.senderName ? `Sender: ${p.senderName}` : 'Direct Payment Received',
+      amount: p.amount,
+      badge: 'Payment',
+      badgeColor: '#15803d',
+      badgeBg: '#ecfdf5',
+      date: p.date,
+      details: p,
+    });
+  });
+
+  dayExpenses.forEach(e => {
+    timeline.push({
+      id: `exp-${e.id}`,
+      type: 'expense',
+      title: `Expense: ${e.description || 'General Expense'}`,
+      subtitle: `Recorded on ${new Date(e.date).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}`,
+      amount: e.amount,
+      badge: 'Expense',
+      badgeColor: '#c2410c',
+      badgeBg: '#fff7ed',
+      date: e.date,
+      details: e,
+    });
+  });
+
+  dayFunds.forEach(f => {
+    timeline.push({
+      id: `fund-${f.id}`,
+      type: 'fund',
+      title: `Company Fund Deposit`,
+      subtitle: f.description || 'Fund Deposit',
+      amount: f.amount,
+      badge: 'Fund',
+      badgeColor: '#1d4ed8',
+      badgeBg: '#eff6ff',
+      date: f.date,
+      details: f,
+    });
+  });
+
+  dayOrders.forEach(o => {
+    timeline.push({
+      id: `order-${o.id}`,
+      type: 'order',
+      title: `Order: ${o.shopName}`,
+      subtitle: `${o.quantity} ${o.itemName}`,
+      amount: o.amount,
+      badge: 'Order',
+      badgeColor: '#7e22ce',
+      badgeBg: '#faf5ff',
+      date: o.date,
+      details: o,
+    });
+  });
+
+  dayOrder1s.forEach(o1 => {
+    timeline.push({
+      id: `order1-${o1.id}`,
+      type: 'order1',
+      title: `Daily Item: ${o1.vegetableOption}`,
+      subtitle: `${o1.numberOfVegetables} Boxes / Count`,
+      badge: 'Daily Item',
+      badgeColor: '#0e7490',
+      badgeBg: '#ecfeff',
+      date: o1.date,
+      details: o1,
+    });
+  });
+
+  timeline.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
+
+  return {
+    date,
+    dateKey: targetKey,
+    summary: {
+      totalSales,
+      salesCount: daySales.length,
+      totalBoxes,
+      totalReceived,
+      paymentsCount: dayPayments.length,
+      totalExpenses,
+      expensesCount: dayExpenses.length,
+      totalFunds,
+      fundsCount: dayFunds.length,
+      totalOrders: totalOrdersAmount,
+      ordersCount: dayOrders.length,
+      order1sCount: dayOrder1s.length,
+      totalOrder1Boxes,
+      totalActivities,
+      pendingGenerated,
+      netCashFlow
+    },
+    sales: daySales,
+    payments: dayPayments,
+    expenses: dayExpenses,
+    companyFunds: dayFunds,
+    orders: dayOrders,
+    order1s: dayOrder1s,
+    timeline
+  };
 }
 
 export async function resetDatabase() {
@@ -338,12 +600,16 @@ export async function getExpenseStats() {
 export async function createCompanyFund(data: { amount: number; description?: string }) {
   const fund = await prisma.companyFund.create({ data });
   revalidatePath('/');
+  revalidatePath('/reports');
+  revalidatePath('/expenses');
   return fund;
 }
 
 export async function createExpense(data: { amount: number; description?: string }) {
   const expense = await prisma.expense.create({ data });
   revalidatePath('/');
+  revalidatePath('/reports');
+  revalidatePath('/expenses');
   return expense;
 }
 
@@ -358,11 +624,15 @@ export async function getRecentExpensesAndFunds() {
 export async function deleteCompanyFund(id: number) {
   await prisma.companyFund.delete({ where: { id } });
   revalidatePath('/');
+  revalidatePath('/reports');
+  revalidatePath('/expenses');
 }
 
 export async function deleteExpense(id: number) {
   await prisma.expense.delete({ where: { id } });
   revalidatePath('/');
+  revalidatePath('/reports');
+  revalidatePath('/expenses');
 }
 
 // --- Orders ---
@@ -381,12 +651,14 @@ export async function getOrders() {
 export async function createOrder(data: { shopName: string; itemName: string; quantity: number; amount: number; date?: Date }) {
   const order = await prisma.order.create({ data });
   revalidatePath('/orders');
+  revalidatePath('/reports');
   return order;
 }
 
 export async function deleteOrder(id: number) {
   await prisma.order.delete({ where: { id } });
   revalidatePath('/orders');
+  revalidatePath('/reports');
 }
 
 // --- Order 1 ---
@@ -418,10 +690,12 @@ export async function getAllOrder1s() {
 export async function createOrder1(data: { vegetableOption: string; numberOfVegetables: number; date?: Date }) {
   const order = await prisma.order1.create({ data });
   revalidatePath('/order1');
+  revalidatePath('/reports');
   return order;
 }
 
 export async function deleteOrder1(id: number) {
   await prisma.order1.delete({ where: { id } });
   revalidatePath('/order1');
+  revalidatePath('/reports');
 }
