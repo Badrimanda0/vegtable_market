@@ -109,8 +109,21 @@ export async function createSale(formData: FormData) {
   revalidatePath('/');
   revalidatePath('/customers');
   revalidatePath('/reports');
+  revalidatePath('/sales/new');
   revalidatePath(`/customers/${data.customerId}`);
   return sale;
+}
+
+export async function getAllSales() {
+  const sales = await prisma.sale.findMany({
+    include: {
+      customer: true
+    },
+    orderBy: {
+      date: 'desc'
+    }
+  });
+  return sales;
 }
 
 export async function createPayment(formData: FormData) {
@@ -455,6 +468,7 @@ export async function deleteSale(id: number, customerId: number) {
   revalidatePath('/');
   revalidatePath('/customers');
   revalidatePath('/reports');
+  revalidatePath('/sales/new');
   revalidatePath(`/customers/${customerId}`);
 }
 
@@ -479,6 +493,7 @@ export async function updateSale(id: number, data: { vegetable: string; quantity
   revalidatePath('/');
   revalidatePath('/customers');
   revalidatePath('/reports');
+  revalidatePath('/sales/new');
   revalidatePath(`/customers/${sale.customerId}`);
   return sale;
 }
