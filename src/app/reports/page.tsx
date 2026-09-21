@@ -14,12 +14,6 @@ export default async function ReportsPage() {
     return new Intl.DateTimeFormat('en-IN', { dateStyle: 'long' }).format(date);
   };
 
-  // Cumulative totals
-  const totalSalesAllTime = reports.reduce((sum, r) => sum + r.totalSales, 0);
-  const totalBoxesAllTime = reports.reduce((sum, r) => sum + r.totalCommission, 0);
-  const totalReceivedAllTime = reports.reduce((sum, r) => sum + r.totalReceived, 0);
-  const totalActivitiesAllTime = reports.reduce((sum, r) => sum + r.totalActivities, 0);
-
   return (
     <div style={{ maxWidth: '1100px', margin: '0 auto' }}>
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem', flexWrap: 'wrap', gap: '1rem' }}>
@@ -28,33 +22,6 @@ export default async function ReportsPage() {
           <p style={{ color: 'var(--text-muted)', fontSize: '0.95rem' }}>
             Click on any date to see the complete breakdown of all sales, payments, boxes, and daily activities.
           </p>
-        </div>
-      </div>
-
-      {/* Top summary stats */}
-      <div className="dashboard-grid" style={{ marginBottom: '1.5rem' }}>
-        <div className="card" style={{ borderLeft: '4px solid var(--primary)' }}>
-          <div className="stat-label">Total Sales Recorded</div>
-          <div className="stat-value" style={{ color: 'var(--foreground)' }}>{formatCurrency(totalSalesAllTime)}</div>
-          <div style={{ fontSize: '0.8rem', color: 'var(--text-muted)', marginTop: '0.25rem' }}>Across {reports.length} recorded day(s)</div>
-        </div>
-
-        <div className="card" style={{ borderLeft: '4px solid #16a34a' }}>
-          <div className="stat-label">Total Boxes Sold</div>
-          <div className="stat-value" style={{ color: '#16a34a' }}>{totalBoxesAllTime} <span style={{ fontSize: '1rem', fontWeight: 'normal' }}>Boxes</span></div>
-          <div style={{ fontSize: '0.8rem', color: 'var(--text-muted)', marginTop: '0.25rem' }}>Total commissions / boxes</div>
-        </div>
-
-        <div className="card" style={{ borderLeft: '4px solid #2563eb' }}>
-          <div className="stat-label">Total Payments Received</div>
-          <div className="stat-value" style={{ color: '#2563eb' }}>{formatCurrency(totalReceivedAllTime)}</div>
-          <div style={{ fontSize: '0.8rem', color: 'var(--text-muted)', marginTop: '0.25rem' }}>Collected from customers</div>
-        </div>
-
-        <div className="card" style={{ borderLeft: '4px solid #8b5cf6' }}>
-          <div className="stat-label">Total Day Activities</div>
-          <div className="stat-value" style={{ color: '#8b5cf6' }}>{totalActivitiesAllTime}</div>
-          <div style={{ fontSize: '0.8rem', color: 'var(--text-muted)', marginTop: '0.25rem' }}>Sales, payments & entries</div>
         </div>
       </div>
 
