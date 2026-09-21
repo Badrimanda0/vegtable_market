@@ -152,7 +152,22 @@ export async function createPayment(formData: FormData) {
   return payment;
 }
 
-
+export async function recordQuickPayment(customerId: number, amount: number, dateStr?: string, senderName?: string) {
+  const paymentDate = dateStr ? new Date(dateStr) : new Date();
+  const payment = await prisma.payment.create({
+    data: {
+      customerId,
+      amount,
+      date: paymentDate,
+      senderName: senderName || 'Quick Payment'
+    }
+  });
+  revalidatePath('/');
+  revalidatePath('/customers');
+  revalidatePath('/reports');
+  revalidatePath(`/customers/${customerId}`);
+  return payment;
+}
 
 export async function getDailyReports() {
   const [sales, payments, expenses, companyFunds, orders, order1s] = await Promise.all([
