@@ -32,28 +32,9 @@ export default async function Dashboard() {
       
       <div className="dashboard-grid">
         <div className="card">
-          <div className="stat-label">Today's Total Sales</div>
-          <div className="stat-value">{formatCurrency(stats.todaySales)}</div>
-        </div>
-        
-        <div className="card">
           <div className="stat-label">{stats.pendingDebt < 0 ? 'Total Advance (We Owe)' : 'Total Debt (Pending)'}</div>
           <div className="stat-value" style={{ color: stats.pendingDebt < 0 ? 'var(--success)' : 'var(--danger)' }}>
             {stats.pendingDebt < 0 ? formatCurrency(Math.abs(stats.pendingDebt)) : formatCurrency(stats.pendingDebt)}
-          </div>
-        </div>
-        
-        <div className="card">
-          <div className="stat-label">Total Received</div>
-          <div className="stat-value" style={{ color: 'var(--foreground)' }}>
-            {formatCurrency(stats.totalReceived)}
-          </div>
-        </div>
-        
-        <div className="card">
-          <div className="stat-label">Total Boxes</div>
-          <div className="stat-value" style={{ color: 'var(--success)' }}>
-            {stats.totalCommission}
           </div>
         </div>
       </div>
